@@ -20,6 +20,7 @@ import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Build
 import android.os.UserHandle
+import com.android.permissioncontroller.permission.utils.Utils
 
 /**
  * A lightweight version of the AppPermissionGroup data structure. Represents information about a
@@ -86,6 +87,8 @@ data class LightAppPermGroup(
     val foregroundPermNames get() = permissions.mapNotNull { (name, _) ->
         if (name !in backgroundPermNames) name else null
     }
+    
+    val isPlatformPermissionGroup = permGroupInfo.packageName == Utils.OS_PKG
 
     val foreground =
         AppPermSubGroup(
@@ -196,12 +199,14 @@ data class LightAppPermGroup(
      *
      * @param permissions The permissions contained within this subgroup, a subset of those contained
      * in the full group
+     * @param isPlatformPermissionGroup Whether this is a platform permission group
      * @param specialLocationGrant Whether this is a special location package
      * @param specialFixedStorageGrant Whether this is a special storage grant
      */
     data class AppPermSubGroup internal constructor(
         private val permissions: Map<String, LightPermission>,
         private val packageInfo: LightPackageInfo,
+        private val isPlatformPermissionGroup: Boolean,
         private val specialLocationGrant: Boolean?,
         private val specialFixedStorageGrant: Boolean
     ) {
